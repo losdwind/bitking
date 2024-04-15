@@ -20,7 +20,7 @@ def mine(prefix_name, difficulty):
         nonce += 1
 
 # 使用自己的昵称
-nickname = "YourNickname"
+nickname = "ajs"
 print("Mining for 4 leading zeros:")
 mine(nickname, 4)
 print("Mining for 5 leading zeros:")
