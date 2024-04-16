@@ -16,7 +16,6 @@ class Blockchain:
         self.nodes = set()
         # 创建创世块
         self.initialize_block(initial_hash='1')
-        self.guessed_hash = ''
 
     def register_node(self, address: str) -> None:
         """
