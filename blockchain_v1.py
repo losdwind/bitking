@@ -155,7 +155,3 @@ def register_node():
     }
 
     return jsonify(response), 201
-
-@app.route('/nodes/resolve')
-def consensus():
-    replaced = 
