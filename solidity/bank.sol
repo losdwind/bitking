@@ -14,7 +14,7 @@ contract Bank {
     }
 
     // 接收存款的回退函数
-    receive() external payable {
+    receive() external payable virtual {
         require(msg.value > 0, "Deposit amount must be greater than zero");
         balances[msg.sender] += msg.value;
         updateTopDepositors(msg.sender, balances[msg.sender]);
