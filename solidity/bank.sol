@@ -21,17 +21,20 @@ contract Bank {
     }
 
     // 更新前三存款者的记录
-    function updateTopDepositors(address depositor, uint amount) internal {
-        // Simple insertion sort
-        for (uint i = 0; i < topDepositors.length; i++) {
-            if (topDepositors[i] == address(0) || balances[topDepositors[i]] < amount) {
-                // Shift addresses down
-                for (uint j = topDepositors.length - 1; j > i; j--) {
-                    topDepositors[j] = topDepositors[j - 1];
+    function updateTopDepositors(address depositor, uint balance) internal {
+        if (balance > balances[topDepositors[2]]){
+            if(balance > balances[topDepositors[1]]){
+                if(balance > balances[topDepositors[0]]){
+                    topDepositors[2] = topDepositors[1];
+                    topDepositors[1] = topDepositors[0];
+                    topDepositors[0] = depositor;
+                    return;
                 }
-                topDepositors[i] = depositor;
-                break;
+                topDepositors[2] = topDepositors[1];
+                topDepositors[1] = depositor;
+                return;
             }
+            topDepositors[2] = depositor;
         }
     }
 
