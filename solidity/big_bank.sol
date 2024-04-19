@@ -13,6 +13,10 @@ contract Ownable {
     function withdraw(address payable bank, uint amount) public {
         BigBank(bank).withdraw(amount);
     }
+
+    fucntion getBalance() public view return(uint){
+        return address(this).balance
+    }
 }
 
 contract BigBank is Bank {
