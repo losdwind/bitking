@@ -14,7 +14,7 @@ contract Ownable {
         BigBank(bank).withdraw(amount);
     }
 
-    fucntion getBalance() public view return(uint){
+    function getBalance() public view returns(uint){
         return address(this).balance
     }
 }
