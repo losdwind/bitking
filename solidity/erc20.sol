@@ -16,13 +16,13 @@ contract BaseERC20 {
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed owner, address indexed spender, uint256 value);
 
-    constructor(string memory _name, string memory _symbol, uint8 _decimals, uint256 _totalSupply) public {
+    constructor() public {
         // write your code here
         // set name,symbol,decimals,totalSupply
-        name = _name;
-        symbol = _symbol;
-        decimals = _decimals;
-        totalSupply = _totalSupply;
+        name = "BaseERC20";
+        symbol = "BERC20";
+        decimals = 18;
+        totalSupply = 100000000 ether;
 
         balances[msg.sender] = totalSupply;  
     }
@@ -35,9 +35,8 @@ contract BaseERC20 {
 
     function transfer(address _to, uint256 _value) public returns (bool success) {
         // write your code here
-        require(balances[msg.sender] >= _value, "ERC20:transfer amount exceeds balance");
-        (bool _success, ) = _to.call{value:_value}(new bytes(0));
-        require(_success, 'transfer failed');
+        require(balances[msg.sender] >= _value, "ERC20: transfer amount exceeds balance");
+
         balances[msg.sender] -= _value;
         balances[_to] += _value;
         emit Transfer(msg.sender, _to, _value);  
@@ -47,12 +46,10 @@ contract BaseERC20 {
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
         // write your code here
         require(balances[_from]  >= _value, "ERC20: transfer amount exceeds balance");
-        require(allowances[_from][_to] >= _value, "RC20: transfer amount exceeds allowance");
-        (bool _success, )= _to.call{value:_value}(new bytes(0));
-        require(_success, 'error in transaction');
+        require(allowances[_from][msg.sender] >= _value, "ERC20: transfer amount exceeds allowance");
         balances[_from] -= _value;
         balances[_to] += _value;
-        allowances[_from][_to] -= _value;
+        allowances[_from][msg.sender] -= _value;
         emit Transfer(_from, _to, _value); 
         return true; 
     }
