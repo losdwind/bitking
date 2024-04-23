@@ -1,0 +1,11 @@
+{
+    "name": "Dental Bot",
+    "description": "A caring robot offering a sparkling white tooth!",
+    "image": "https://ivory-electric-gull-582.mypinata.cloud/ipfs/QmdXGDDXhmZ6vt2XgGhtvM5fZSGRjKSuCeNWsvyVcR5kaA/2.jpg",
+    "attributes": [
+        {
+            "trait_type": "Holding",
+            "value": "Beer"
+        }
+    ]
+}

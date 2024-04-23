@@ -1,0 +1,11 @@
+{
+    "name": "Mechanic Mate",
+    "description": "A helpful robot ready to fix anything with its wrench!",
+    "image": "https://ivory-electric-gull-582.mypinata.cloud/ipfs/QmdXGDDXhmZ6vt2XgGhtvM5fZSGRjKSuCeNWsvyVcR5kaA/3.jpg",
+    "attributes": [
+        {
+            "trait_type": "Holding",
+            "value": "Tooth"
+        }
+    ]
+}

@@ -1,0 +1,11 @@
+{
+    "name": "Robo Bartender",
+    "description": "A cheerful robot enjoying a pint of the finest oil!",
+    "image": "https://ivory-electric-gull-582.mypinata.cloud/ipfs/QmdXGDDXhmZ6vt2XgGhtvM5fZSGRjKSuCeNWsvyVcR5kaA/1.jpg",
+    "attributes": [
+        {
+            "trait_type": "Mood",
+            "value": "Happy"
+        }
+    ]
+}
