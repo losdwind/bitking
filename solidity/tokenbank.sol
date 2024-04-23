@@ -3,9 +3,7 @@ pragma solidity ^0.8.0;
 
 
 contract TokenBank {
-    uint public balance;
     mapping(address => uint) public balances;
-    BaseERC20 private token;
     address public tokenAddress;
 
     event Deposited(address _from, address _to, uint _value);
@@ -13,28 +11,25 @@ contract TokenBank {
 
 
     constructor(address _tokenAddress){
-        token = BaseERC20(_tokenAddress);
         tokenAddress = _tokenAddress;
     }
 
     function deposit(uint _value) public {
-        require(token.balanceOf(msg.sender) >= _value, "Insufficient balance");
+        require(BaseERC20(tokenAddress).balanceOf(msg.sender) >= _value, "Insufficient balance");
         // bytes memory payload = abi.encodeWithSignature("transfer(address, uint)");
         // (bool success, ) = payable(msg.sender).delegatecall(payload);
-        require(token.allowance(msg.sender, address(this)) > _value, "Insufficient allowance");
+        require(BaseERC20(tokenAddress).allowance(msg.sender, address(this)) > _value, "Insufficient allowance");
         // require(success, "Failed to deposit");
-        token.transferFrom(msg.sender, address(this), _value);
+        BaseERC20(tokenAddress).transferFrom(msg.sender, address(this), _value);
         balances[msg.sender]  += _value;
-        balance += _value;
         emit Deposited(msg.sender, address(this), _value);
     }
 
     function withdraw(uint _value) public{
         require(balances[msg.sender] >= _value, "Insufficient balance");
-        require(token.balanceOf(address(this)) >= _value, "Bankcrupted");
-        token.transfer(msg.sender,_value);
+        require(BaseERC20(tokenAddress).balanceOf(address(this)) >= _value, "Bankcrupted");
+        BaseERC20(tokenAddress).transfer(msg.sender,_value);
         balances[msg.sender] -= _value;
-        balance -= _value;
     }
 
 }
