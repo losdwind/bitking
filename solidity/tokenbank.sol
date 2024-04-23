@@ -16,10 +16,7 @@ contract TokenBank {
 
     function deposit(uint _value) public {
         require(BaseERC20(tokenAddress).balanceOf(msg.sender) >= _value, "Insufficient balance");
-        // bytes memory payload = abi.encodeWithSignature("transfer(address, uint)");
-        // (bool success, ) = payable(msg.sender).delegatecall(payload);
         require(BaseERC20(tokenAddress).allowance(msg.sender, address(this)) > _value, "Insufficient allowance");
-        // require(success, "Failed to deposit");
         BaseERC20(tokenAddress).transferFrom(msg.sender, address(this), _value);
         balances[msg.sender]  += _value;
         emit Deposited(msg.sender, address(this), _value);
