@@ -3,7 +3,6 @@ pragma solidity 0.8.25;
 
 import "./9_ERC721.sol";
 import "./8_ERC_20_Extended.sol";
-import "./8_ERC_20_Extended.sol";
 
 contract NftMarket is TokenRecipient {
     address tokenAddress;
