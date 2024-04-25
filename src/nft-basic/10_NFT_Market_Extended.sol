@@ -8,23 +8,17 @@ contract NftMarket is TokenRecipient {
     address tokenAddress;
     address nftAddress;
 
-    mapping(uint => uint) prices;
-    mapping(uint => address) seller;
+    mapping(uint256 => uint256) prices;
+    mapping(uint256 => address) seller;
 
     constructor(address _tokenAddress, address _nftAddress) {
         tokenAddress = _tokenAddress;
         nftAddress = _nftAddress;
     }
 
-    function tokenReceived(
-        address sender,
-        uint nftId,
-        uint256 amount
-    ) external returns (bool) {
-        require(
-            prices[nftId] <= amount,
-            "payment value is less than list price"
-        );
+    function tokenReceived(address sender, uint256 amount, bytes calldata data) external returns (bool) {
+        uint nftId = abi.decode(data, (uint));
+        require(prices[nftId] <= amount, "payment value is less than list price");
         BaseERC20(tokenAddress).transfer(seller[nftId], prices[nftId]);
         AJNFT(nftAddress).safeTransferFrom(address(this), sender, nftId);
         delete prices[nftId];
@@ -32,7 +26,7 @@ contract NftMarket is TokenRecipient {
         return true;
     }
 
-    function list(uint nftId, uint price) external returns (bool) {
+    function list(uint256 nftId, uint256 price) external returns (bool) {
         // AJNFT(nftAddress).safeTransferFrom(msg.sender, address(this), nftId);
         AJNFT(nftAddress).transferFrom(msg.sender, address(this), nftId);
 
@@ -41,12 +35,8 @@ contract NftMarket is TokenRecipient {
         return true;
     }
 
-    function buyNFT(uint nftId) external returns (bool) {
-        BaseERC20(tokenAddress).transferFrom(
-            msg.sender,
-            address(this),
-            prices[nftId]
-        );
+    function buyNFT(uint256 nftId) external returns (bool) {
+        BaseERC20(tokenAddress).transferFrom(msg.sender, address(this), prices[nftId]);
         BaseERC20(tokenAddress).transfer(seller[nftId], prices[nftId]);
         AJNFT(nftAddress).safeTransferFrom(address(this), msg.sender, nftId);
         delete prices[nftId];

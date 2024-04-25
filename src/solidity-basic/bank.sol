@@ -3,14 +3,14 @@ pragma solidity ^0.8.0;
 
 contract Bank {
     address public owner;
-    mapping(address => uint) public balances;
+    mapping(address => uint256) public balances;
     address[3] public topDepositors;
 
-    event Withdrawed(address from, address to, uint amount);
+    event Withdrawed(address from, address to, uint256 amount);
 
     constructor() {
         owner = msg.sender;
-        topDepositors = [address(0), address(0), address(0)] ;
+        topDepositors = [address(0), address(0), address(0)];
     }
 
     // 接收存款的回退函数
@@ -21,10 +21,10 @@ contract Bank {
     }
 
     // 更新前三存款者的记录
-    function updateTopDepositors(address depositor, uint balance) internal {
-        if (balance > balances[topDepositors[2]]){
-            if(balance > balances[topDepositors[1]]){
-                if(balance > balances[topDepositors[0]]){
+    function updateTopDepositors(address depositor, uint256 balance) internal {
+        if (balance > balances[topDepositors[2]]) {
+            if (balance > balances[topDepositors[1]]) {
+                if (balance > balances[topDepositors[0]]) {
                     topDepositors[2] = topDepositors[1];
                     topDepositors[1] = topDepositors[0];
                     topDepositors[0] = depositor;
@@ -39,20 +39,19 @@ contract Bank {
     }
 
     // 提现方法，仅管理员可用
-    function withdraw(uint amount) public {
+    function withdraw(uint256 amount) public {
         require(msg.sender == owner, "Only the owner can withdraw funds");
         require(address(this).balance >= amount, "Insufficient funds");
 
         payable(owner).transfer(amount);
 
         emit Withdrawed(address(this), msg.sender, amount);
-
     }
 
     // 查看前三名存款者的函数
-    function getTopDepositors() public view returns (address[3] memory, uint[] memory) {
-        uint[] memory topBalances = new uint[](3);
-        for (uint i = 0; i < topDepositors.length; i++) {
+    function getTopDepositors() public view returns (address[3] memory, uint256[] memory) {
+        uint256[] memory topBalances = new uint256[](3);
+        for (uint256 i = 0; i < topDepositors.length; i++) {
             if (topDepositors[i] != address(0)) {
                 topBalances[i] = balances[topDepositors[i]];
             }
@@ -61,7 +60,7 @@ contract Bank {
     }
 
     // 获取合约余额的函数
-    function getBalance() public view returns (uint) {
+    function getBalance() public view returns (uint256) {
         return address(this).balance;
     }
 }

@@ -2,52 +2,39 @@
 pragma solidity ^0.8.0;
 
 interface TokenRecipient {
-    function tokenReceived(address sender, uint amount) external returns (bool);
+    function tokenReceived(address sender, uint256 amount) external returns (bool);
 }
 
 contract TokenBank is TokenRecipient {
-    mapping(address => uint) public balances;
+    mapping(address => uint256) public balances;
     address public tokenAddress;
 
-    event Deposited(address _from, address _to, uint _value);
-    event Withdrawed(address _from, address _to, uint _value);
+    event Deposited(address _from, address _to, uint256 _value);
+    event Withdrawed(address _from, address _to, uint256 _value);
 
     constructor(address _tokenAddress) {
         tokenAddress = _tokenAddress;
     }
 
-    function deposit(uint _value) public {
-        require(
-            BaseERC20(tokenAddress).balanceOf(msg.sender) >= _value,
-            "Insufficient balance"
-        );
+    function deposit(uint256 _value) public {
+        require(BaseERC20(tokenAddress).balanceOf(msg.sender) >= _value, "Insufficient balance");
         // bytes memory payload = abi.encodeWithSignature("transfer(address, uint)");
         // (bool success, ) = payable(msg.sender).delegatecall(payload);
-        require(
-            BaseERC20(tokenAddress).allowance(msg.sender, address(this)) >
-                _value,
-            "Insufficient allowance"
-        );
+        require(BaseERC20(tokenAddress).allowance(msg.sender, address(this)) > _value, "Insufficient allowance");
         // require(success, "Failed to deposit");
         BaseERC20(tokenAddress).transferFrom(msg.sender, address(this), _value);
         balances[msg.sender] += _value;
         emit Deposited(msg.sender, address(this), _value);
     }
 
-    function withdraw(uint _value) public {
+    function withdraw(uint256 _value) public {
         require(balances[msg.sender] >= _value, "Insufficient balance");
-        require(
-            BaseERC20(tokenAddress).balanceOf(address(this)) >= _value,
-            "Bankcrupted"
-        );
+        require(BaseERC20(tokenAddress).balanceOf(address(this)) >= _value, "Bankcrupted");
         BaseERC20(tokenAddress).transfer(msg.sender, _value);
         balances[msg.sender] -= _value;
     }
 
-    function tokenReceived(
-        address sender,
-        uint256 amount
-    ) external returns (bool) {
+    function tokenReceived(address sender, uint256 amount) external returns (bool) {
         balances[sender] += amount;
         emit Deposited(sender, address(this), amount);
         return true;
@@ -66,11 +53,7 @@ contract BaseERC20 {
     mapping(address => mapping(address => uint256)) allowances;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(
-        address indexed owner,
-        address indexed spender,
-        uint256 value
-    );
+    event Approval(address indexed owner, address indexed spender, uint256 value);
 
     constructor() {
         // write your code here
@@ -88,16 +71,10 @@ contract BaseERC20 {
         balance = balances[_owner];
     }
 
-    function transfer(
-        address _to,
-        uint256 _value
-    ) public returns (bool success) {
+    function transfer(address _to, uint256 _value) public returns (bool success) {
         // write your code here
         require(msg.sender != _to, "Cannot transfer to self");
-        require(
-            balances[msg.sender] >= _value,
-            "ERC20: transfer amount exceeds balance"
-        );
+        require(balances[msg.sender] >= _value, "ERC20: transfer amount exceeds balance");
 
         balances[msg.sender] -= _value;
         balances[_to] += _value;
@@ -105,42 +82,26 @@ contract BaseERC20 {
         return true;
     }
 
-    function transferWithCallback(
-        address recipient,
-        uint256 amount
-    ) external returns (bool) {
+    function transferWithCallback(address recipient, uint256 amount) external returns (bool) {
         transfer(recipient, amount);
-        uint size;
+        uint256 size;
         assembly {
             size := extcodesize(recipient)
         }
 
         if (size > 0) {
-            bool success = TokenRecipient(recipient).tokenReceived(
-                msg.sender,
-                amount
-            );
+            bool success = TokenRecipient(recipient).tokenReceived(msg.sender, amount);
             require(success, "No tokens received");
         }
 
         return true;
     }
 
-    function transferFrom(
-        address _from,
-        address _to,
-        uint256 _value
-    ) public returns (bool success) {
+    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
         // write your code here
         require(_from != _to, "Cannot transfer to same person");
-        require(
-            balances[_from] >= _value,
-            "ERC20: transfer amount exceeds balance"
-        );
-        require(
-            allowances[_from][msg.sender] >= _value,
-            "ERC20: transfer amount exceeds allowance"
-        );
+        require(balances[_from] >= _value, "ERC20: transfer amount exceeds balance");
+        require(allowances[_from][msg.sender] >= _value, "ERC20: transfer amount exceeds allowance");
         balances[_from] -= _value;
         balances[_to] += _value;
         allowances[_from][msg.sender] -= _value;
@@ -148,26 +109,17 @@ contract BaseERC20 {
         return true;
     }
 
-    function approve(
-        address _spender,
-        uint256 _value
-    ) public returns (bool success) {
+    function approve(address _spender, uint256 _value) public returns (bool success) {
         // write your code here
         require(msg.sender != _spender, "Cannot approve yourself");
-        require(
-            balanceOf(msg.sender) >= _value,
-            "Insufficient balance to allow"
-        );
+        require(balanceOf(msg.sender) >= _value, "Insufficient balance to allow");
 
         allowances[msg.sender][_spender] = _value;
         emit Approval(msg.sender, _spender, _value);
         return true;
     }
 
-    function allowance(
-        address _owner,
-        address _spender
-    ) public view returns (uint256 remaining) {
+    function allowance(address _owner, address _spender) public view returns (uint256 remaining) {
         // write your code here
         remaining = allowances[_owner][_spender];
     }

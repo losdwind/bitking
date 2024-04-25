@@ -4,11 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/Address.sol";
 
 interface TokenRecipient {
-    function tokenReceived(
-        address sender,
-        uint nftId,
-        uint amount
-    ) external returns (bool);
+    function tokenReceived(address sender, uint256 amount, bytes calldata data) external returns (bool);
 }
 
 contract BaseERC20 {
@@ -25,11 +21,7 @@ contract BaseERC20 {
     mapping(address => mapping(address => uint256)) allowances;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(
-        address indexed owner,
-        address indexed spender,
-        uint256 value
-    );
+    event Approval(address indexed owner, address indexed spender, uint256 value);
 
     constructor() {
         // write your code here
@@ -47,16 +39,10 @@ contract BaseERC20 {
         balance = balances[_owner];
     }
 
-    function transfer(
-        address _to,
-        uint256 _value
-    ) public returns (bool success) {
+    function transfer(address _to, uint256 _value) public returns (bool success) {
         // write your code here
         require(msg.sender != _to, "Cannot transfer to self");
-        require(
-            balances[msg.sender] >= _value,
-            "ERC20: transfer amount exceeds balance"
-        );
+        require(balances[msg.sender] >= _value, "ERC20: transfer amount exceeds balance");
 
         balances[msg.sender] -= _value;
         balances[_to] += _value;
@@ -64,44 +50,26 @@ contract BaseERC20 {
         return true;
     }
 
-    function transferWithCallback(
-        address recipient,
-        uint nftId,
-        uint256 amount
-    ) external returns (bool) {
+    function transferWithCallback(address recipient, bytes calldata data, uint256 amount) external returns (bool) {
         transfer(recipient, amount);
-        uint size;
+        uint256 size;
         assembly {
             size := extcodesize(recipient)
         }
 
         if (size > 0) {
-            bool success = TokenRecipient(recipient).tokenReceived(
-                msg.sender,
-                nftId,
-                amount
-            );
+            bool success = TokenRecipient(recipient).tokenReceived(msg.sender, amount, data);
             require(success, "No tokens received");
         }
 
         return true;
     }
 
-    function transferFrom(
-        address _from,
-        address _to,
-        uint256 _value
-    ) public returns (bool success) {
+    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
         // write your code here
         require(_from != _to, "Cannot transfer to same person");
-        require(
-            balances[_from] >= _value,
-            "ERC20: transfer amount exceeds balance"
-        );
-        require(
-            allowances[_from][msg.sender] >= _value,
-            "ERC20: transfer amount exceeds allowance"
-        );
+        require(balances[_from] >= _value, "ERC20: transfer amount exceeds balance");
+        require(allowances[_from][msg.sender] >= _value, "ERC20: transfer amount exceeds allowance");
         balances[_from] -= _value;
         balances[_to] += _value;
         allowances[_from][msg.sender] -= _value;
@@ -109,26 +77,17 @@ contract BaseERC20 {
         return true;
     }
 
-    function approve(
-        address _spender,
-        uint256 _value
-    ) public returns (bool success) {
+    function approve(address _spender, uint256 _value) public returns (bool success) {
         // write your code here
         require(msg.sender != _spender, "Cannot approve yourself");
-        require(
-            balanceOf(msg.sender) >= _value,
-            "Insufficient balance to allow"
-        );
+        require(balanceOf(msg.sender) >= _value, "Insufficient balance to allow");
 
         allowances[msg.sender][_spender] = _value;
         emit Approval(msg.sender, _spender, _value);
         return true;
     }
 
-    function allowance(
-        address _owner,
-        address _spender
-    ) public view returns (uint256 remaining) {
+    function allowance(address _owner, address _spender) public view returns (uint256 remaining) {
         // write your code here
         remaining = allowances[_owner][_spender];
     }
