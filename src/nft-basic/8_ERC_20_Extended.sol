@@ -50,7 +50,7 @@ contract BaseERC20 {
         return true;
     }
 
-    function transferWithCallback(address recipient, bytes calldata data, uint256 amount) external returns (bool) {
+    function transferWithCallback(address recipient,uint256 amount, bytes calldata data) external returns (bool) {
         transfer(recipient, amount);
         uint256 size;
         assembly {

@@ -17,7 +17,7 @@ contract NftMarket is TokenRecipient {
     }
 
     function tokenReceived(address sender, uint256 amount, bytes calldata data) external returns (bool) {
-        uint nftId = abi.decode(data, (uint));
+        uint256 nftId = abi.decode(data, (uint256));
         require(prices[nftId] <= amount, "payment value is less than list price");
         BaseERC20(tokenAddress).transfer(seller[nftId], prices[nftId]);
         AJNFT(nftAddress).safeTransferFrom(address(this), sender, nftId);
