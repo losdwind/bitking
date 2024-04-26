@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: SEE LICENSE IN LICENSE
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.25;
 
 import "../src/nft-basic/8_ERC_20_Extended.sol";
@@ -21,7 +21,7 @@ contract ERC20Test is Test {
         vm.assume(amount < token.totalSupply());
         emit log_address(alice);
         token.transfer(alice, amount);
-        vm.assertEq(token.balanceOf(alice), amount);
+        assertEq(token.balanceOf(alice), amount);
     }
 
     function test_allowance(uint256 amount) public {
@@ -43,7 +43,7 @@ contract ERC20Test is Test {
     }
 
     function test_transferFrom_withoutApprove(uint256 amount) public {
-        // vm.assume(amount > 0);
+        vm.assume(amount > 0);
         vm.assume(amount < token.totalSupply());
         token.transfer(alice, amount);
         vm.expectRevert("ERC20: transfer amount exceeds allowance");

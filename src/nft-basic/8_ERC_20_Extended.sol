@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.25;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 
@@ -50,7 +50,7 @@ contract BaseERC20 {
         return true;
     }
 
-    function transferWithCallback(address recipient,uint256 amount, bytes calldata data) external returns (bool) {
+    function transferWithCallback(address recipient, uint256 amount, bytes calldata data) external returns (bool) {
         transfer(recipient, amount);
         uint256 size;
         assembly {
