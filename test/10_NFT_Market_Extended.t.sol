@@ -13,6 +13,9 @@ contract NftMarketTest is Test {
     address alice;
     address bob;
 
+    event Listed(address seller, uint price);
+    event Sold(address seller, address buyer, uint price);
+
     function setUp() public {
         coin = new BaseERC20();
         nft = new AJNFT();
@@ -93,5 +96,35 @@ contract NftMarketTest is Test {
         assertEq(nft.balanceOf(alice), 0);
         assertEq(coin.balanceOf(bob), 4 ether - 3 ether);
         assertEq(coin.balanceOf(alice), 3 ether + 3 ether);
+    }
+
+    function test_listEvent() public {
+        vm.prank(alice);
+        nft.approve(address(market), 1);
+        assertEq(nft.getApproved(1), address(market));
+        vm.prank(bob);
+        coin.approve(address(market), 3e18);
+        assertEq(coin.allowance(bob, address(market)), 3 ether);
+        vm.prank(alice);
+
+        vm.expectEmit();
+        emit Listed(alice, 3e18);
+        market.list(1, 3 ether);
+    }
+
+    function test_soldEvent() public {
+        vm.prank(alice);
+        nft.approve(address(market), 1);
+        assertEq(nft.getApproved(1), address(market));
+        vm.prank(bob);
+        coin.approve(address(market), 3e18);
+        assertEq(coin.allowance(bob, address(market)), 3 ether);
+        vm.prank(alice);
+        market.list(1, 3 ether);
+        vm.prank(bob);
+
+        vm.expectEmit();
+        emit Sold(alice, bob, 3e18);
+        coin.transferWithCallback(address(market), 3 ether, abi.encode(1)); // bob transfer 3 ether to market;
     }
 }

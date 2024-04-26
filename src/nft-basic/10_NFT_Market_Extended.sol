@@ -11,6 +11,9 @@ contract NftMarket is TokenRecipient {
     mapping(uint256 => uint256) prices;
     mapping(uint256 => address) seller;
 
+    event Listed(address seller, uint256 price);
+    event Sold(address seller, address buyer, uint256 price);
+
     constructor(address _tokenAddress, address _nftAddress) {
         tokenAddress = _tokenAddress;
         nftAddress = _nftAddress;
@@ -21,6 +24,7 @@ contract NftMarket is TokenRecipient {
         require(prices[nftId] <= amount, "payment value is less than list price");
         BaseERC20(tokenAddress).transfer(seller[nftId], prices[nftId]);
         AJNFT(nftAddress).safeTransferFrom(address(this), sender, nftId);
+        emit Sold(seller[nftId], sender, prices[nftId]);
         delete prices[nftId];
         delete seller[nftId];
         return true;
@@ -32,6 +36,7 @@ contract NftMarket is TokenRecipient {
 
         prices[nftId] = price;
         seller[nftId] = msg.sender;
+        emit Listed(msg.sender, price);
         return true;
     }
 
@@ -39,6 +44,7 @@ contract NftMarket is TokenRecipient {
         BaseERC20(tokenAddress).transferFrom(msg.sender, address(this), prices[nftId]);
         BaseERC20(tokenAddress).transfer(seller[nftId], prices[nftId]);
         AJNFT(nftAddress).safeTransferFrom(address(this), msg.sender, nftId);
+        emit Sold(seller[nftId], msg.sender, prices[nftId]);
         delete prices[nftId];
         delete seller[nftId];
         return true;
