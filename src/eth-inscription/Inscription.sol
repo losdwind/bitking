@@ -1,77 +1,55 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.25;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/proxy/Proxy.sol";
+import "forge-std/console.sol";
 
-contract Inscription is ERC20 {
+contract Inscription is ERC20Upgradeable {
     bool isBase;
-    address owner;
-    uint permint;
+    address public owner;
+    uint public perMint;
+    uint public price;
+    uint public totalSupplyLimit;
+    uint public fee;
 
-    constructor() ERC20("Base Token", "BAT") {
+    constructor() {
+        // _disableInitializers();
         isBase = true;
     }
 
+    receive() external payable {}
+
     function initialize(
         address _owner,
-        string calldata _name,
         string calldata _symbol,
-        uint _totalSupply,
-        uint _permint
-    ) external {
-        require(!isBase, "this contract has been initialized");
+        uint _totalSupplyLimit,
+        uint _perMint,
+        uint _price,
+        uint _fee
+    ) external initializer {
+        require(isBase == false, "this contract has been initialized");
         require(owner == address(0), "this contract has been initialized");
+        console.log("require meet");
+        __ERC20_init(_symbol, _symbol);
         owner = _owner;
-        permint = _permint;
-        _totalSupply = _totalSupply;
-        _name = _name;
-        _symbol = _symbol;
+        perMint = _perMint;
+        totalSupplyLimit = _totalSupplyLimit;
+        price = _price;
+        fee = _fee;
     }
 
-    function mint(address account) external {
-        _mint(account, permint);
-    }
-}
+    function mint(address account) external payable {
+        console.log(msg.sender);
+        console.log(msg.sender.balance);
+        require(msg.value >= price, "no sufficient transfer value");
 
-interface Implementation {
-    function initialize(
-        address,
-        string calldata,
-        string calldata,
-        uint,
-        uint
-    ) external;
-}
-
-contract CloneFactory {
-    address immutable baseContract;
-    mapping(address => address[]) allClones;
-
-    constructor(address _baseContract) {
-        baseContract = _baseContract;
-    }
-
-    function clone(
-        string calldata _name,
-        string calldata _symbol,
-        uint _totalSupply,
-        uint _permint
-    ) external {
-        address child = Clones.clone(baseContract);
-        Implementation(child).initialize(
-            msg.sender,
-            _name,
-            _symbol,
-            _totalSupply,
-            _permint
+        require(
+            totalSupply() < totalSupplyLimit - perMint,
+            "exceed maximum supply"
         );
-        allClones[msg.sender].push(child);
-    }
-
-    function returnClones(
-        address _owner
-    ) external view returns (address[] memory) {
-        return allClones[_owner];
+        _mint(account, perMint);
     }
 }
