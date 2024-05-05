@@ -4,17 +4,16 @@ pragma solidity 0.8.25;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-contract AJNFT is ERC721 {
+contract NewNft is ERC721 {
     using Strings for uint256;
     string public version = "1";
 
     uint256 tokenId;
 
-    bytes32 DOMAIN_SEPARATER;
+    bytes32 public DOMAIN_SEPARATER;
     mapping(address => uint) public nounces;
 
     constructor(uint _chainId) ERC721("Aijie Royalty NFT", "AJR") {
-        tokenId = 1;
         DOMAIN_SEPARATER = keccak256(
             abi.encode(
                 keccak256(
@@ -84,9 +83,7 @@ contract AJNFT is ERC721 {
         require(from == ecrecover(digest, v, r, s));
         require(nounce == nounces[from], "invalid nounce");
         require(deadline == 0 || deadline >= block.timestamp);
-
-        approve(to, nftId);
-
-        emit Approval(from, to, nftId);
+        nounces[from] ++;
+        _transfer(from, to, nftId);
     }
 }

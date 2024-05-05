@@ -30,7 +30,7 @@ contract NftMarket is TokenRecipient {
             "payment value is less than list price"
         );
         NewToken(tokenAddress).transfer(seller[nftId], prices[nftId]);
-        AJNFT(nftAddress).safeTransferFrom(address(this), sender, nftId);
+        NewNft(nftAddress).safeTransferFrom(address(this), sender, nftId);
         emit Sold(seller[nftId], sender, prices[nftId]);
         delete prices[nftId];
         delete seller[nftId];
@@ -38,8 +38,8 @@ contract NftMarket is TokenRecipient {
     }
 
     function list(uint256 nftId, uint256 price) external returns (bool) {
-        // AJNFT(nftAddress).safeTransferFrom(msg.sender, address(this), nftId);
-        AJNFT(nftAddress).transferFrom(msg.sender, address(this), nftId);
+        // NewNft(nftAddress).safeTransferFrom(msg.sender, address(this), nftId);
+        NewNft(nftAddress).transferFrom(msg.sender, address(this), nftId);
 
         prices[nftId] = price;
         seller[nftId] = msg.sender;
@@ -54,7 +54,7 @@ contract NftMarket is TokenRecipient {
             prices[nftId]
         );
         NewToken(tokenAddress).transfer(seller[nftId], prices[nftId]);
-        AJNFT(nftAddress).safeTransferFrom(address(this), msg.sender, nftId);
+        NewNft(nftAddress).safeTransferFrom(address(this), msg.sender, nftId);
         emit Sold(seller[nftId], msg.sender, prices[nftId]);
         delete prices[nftId];
         delete seller[nftId];
@@ -79,17 +79,16 @@ contract NftMarket is TokenRecipient {
         // 2. use attacked digest to get approve to allow address(this) to get the nft
         // 3. then nftmarket check the transaction and conduct the transaction.abi
 
-        AJNFT(nftAddress).permit(from, to, nftId, nounce, deadline, v, r, s);
+        NewNft(nftAddress).permit(from, to, nftId, nounce, deadline, v, r, s);
 
-        AJNFT(nftAddress).transferFrom(from, address(this), nftId);
         prices[nftId] = price;
         seller[nftId] = from;
-        emit Listed(msg.sender, price);
+        emit Listed(from, price);
 
         NewToken(tokenAddress).transferFrom(msg.sender, address(this), price);
-        NewToken(tokenAddress).transferFrom(address(this), to, price);
+        NewToken(tokenAddress).transfer(to, price);
 
-        AJNFT(nftAddress).safeTransferFrom(address(this), to, nftId);
+        NewNft(nftAddress).transferFrom(address(this), msg.sender, nftId);
         emit Sold(seller[nftId], msg.sender, prices[nftId]);
         delete prices[nftId];
         delete seller[nftId];

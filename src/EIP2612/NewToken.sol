@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.25;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "forge-std/console.sol";
 
 interface TokenRecipient {
     function tokenReceived(
@@ -12,7 +13,7 @@ interface TokenRecipient {
 
 contract NewToken is ERC20 {
     string public version = "1";
-    bytes32 DOMAIN_SEPARATER;
+    bytes32 public DOMAIN_SEPARATER;
 
     mapping(address => uint) public nounces;
 
@@ -57,17 +58,19 @@ contract NewToken is ERC20 {
                         owner,
                         spender,
                         value,
-                        nounce,
+                        nounces[owner],
                         deadline
                     )
                 )
             )
         );
+        console.log(owner);
+        console.log("nounce %s",nounces[owner]);
         require(owner != address(0), "invalid owner address");
-        require(owner == ecrecover(digest, v, r, s));
+        require(owner == ecrecover(digest, v, r, s), "owner does not match");
         require(nounce == nounces[owner], "invalid nounce");
         require(deadline == 0 || deadline >= block.timestamp);
-
+        nounces[owner]++;
         _approve(owner, spender, value);
 
         emit Approval(owner, spender, value);

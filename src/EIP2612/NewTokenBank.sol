@@ -33,8 +33,8 @@ contract NewTokenBank {
             s
         );
         NewToken(tokenAddress).transferFrom(owner, address(this), value);
-        bankBalances[msg.sender] += value;
-        emit Deposited(msg.sender, address(this), value);
+        bankBalances[owner] += value;
+        emit Deposited(owner, address(this), value);
     }
 
     function deposit(uint256 _value) public {
