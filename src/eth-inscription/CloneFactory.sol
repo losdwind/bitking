@@ -53,6 +53,13 @@ contract CloneFactory {
 
     function mintInscription(address tokenAddr) external payable {
         console.log("start to mint", msg.sender, msg.sender.balance);
+        require(
+            msg.value >=
+                Inscription(payable(tokenAddr)).price() +
+                    fee +
+                    Inscription(payable(tokenAddr)).fee(),
+            "insufficient payment"
+        );
         Inscription(payable(tokenAddr)).mint{
             value: Inscription(payable(tokenAddr)).price() +
                 Inscription(payable(tokenAddr)).fee()

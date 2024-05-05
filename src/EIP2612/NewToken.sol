@@ -64,8 +64,6 @@ contract NewToken is ERC20 {
                 )
             )
         );
-        console.log(owner);
-        console.log("nounce %s",nounces[owner]);
         require(owner != address(0), "invalid owner address");
         require(owner == ecrecover(digest, v, r, s), "owner does not match");
         require(nounce == nounces[owner], "invalid nounce");

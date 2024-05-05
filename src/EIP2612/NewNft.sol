@@ -8,7 +8,7 @@ contract NewNft is ERC721 {
     using Strings for uint256;
     string public version = "1";
 
-    uint256 tokenId;
+    uint256 public tokenId;
 
     bytes32 public DOMAIN_SEPARATER;
     mapping(address => uint) public nounces;
@@ -80,10 +80,10 @@ contract NewNft is ERC721 {
             )
         );
         require(from != address(0), "invalid owner address");
-        require(from == ecrecover(digest, v, r, s));
+        require(from == ecrecover(digest, v, r, s), "you are not whitelisted");
         require(nounce == nounces[from], "invalid nounce");
         require(deadline == 0 || deadline >= block.timestamp);
-        nounces[from] ++;
+        nounces[from]++;
         _transfer(from, to, nftId);
     }
 }

@@ -86,7 +86,7 @@ contract NftMarket is TokenRecipient {
         emit Listed(from, price);
 
         NewToken(tokenAddress).transferFrom(msg.sender, address(this), price);
-        NewToken(tokenAddress).transfer(to, price);
+        NewToken(tokenAddress).transfer(from, price);
 
         NewNft(nftAddress).transferFrom(address(this), msg.sender, nftId);
         emit Sold(seller[nftId], msg.sender, prices[nftId]);

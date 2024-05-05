@@ -3,8 +3,8 @@ pragma solidity 0.8.25;
 import "./NewToken.sol";
 
 contract NewTokenBank {
-    mapping(address => uint) bankBalances;
-    address tokenAddress;
+    mapping(address => uint) public bankBalances;
+    address public tokenAddress;
 
     event Deposited(address _from, address _to, uint256 _value);
     event Withdrawed(address _from, address _to, uint256 _value);

@@ -25,9 +25,11 @@ contract NftMarketTest is Test {
         // alice mint a nft
         vm.prank(alice);
         NewNft(nftAddress).mint();
-
         // bob get the money to buy nft
         NewToken(tokenAddress).transfer(bob, 1e18);
+
+        console.log("Alice has minted a NFT with ID:", NewNft(nftAddress).tokenId() - 1);
+        console.log("Alice has token balance of", NewToken(tokenAddress).balanceOf(alice));
 
         // alice sign the permit
         bytes32 digest = keccak256(
@@ -50,15 +52,19 @@ contract NftMarketTest is Test {
         );
 
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(alicePrivateKey, digest);
-
+        console.log("Alice generated the signature for digest");
         // bob approve
         vm.prank(bob);
         NewToken(tokenAddress).approve(nftMarketAddress, 1e18);
-        console.log(
-            "allowance from bob to nft market",
-            NewToken(tokenAddress).allowance(bob, nftMarketAddress)
-        );
+        // console.log(
+        //     "allowance from bob to nft market",
+        //     NewToken(tokenAddress).allowance(bob, nftMarketAddress)
+        // );
 
+        console.log("Bob's NFT balance is ", NewNft(nftAddress).balanceOf(bob));
+        console.log("Bob has token balance of", NewToken(tokenAddress).balanceOf(bob));
+
+        console.log("Bob using Alice's signature to buy the NFT....");
         // bob get the signature and try permitBuy
         vm.prank(bob);
         NftMarket(nftMarketAddress).permitBuy(
@@ -74,5 +80,42 @@ contract NftMarketTest is Test {
         );
 
         vm.assertEq(NewNft(nftAddress).ownerOf(0), bob);
+
+        console.log("Alice has balance of NFT:", NewNft(nftAddress).balanceOf(alice));
+        console.log("Alice has token balance of", NewToken(tokenAddress).balanceOf(alice));
+        console.log("Bob has balance of NFT:", NewNft(nftAddress).balanceOf(bob));
+        console.log("Bob has token balance of", NewToken(tokenAddress).balanceOf(bob));
+    }
+
+    function testFailed_directBuy() external {
+        uint alicePrivateKey = 1;
+        uint bobPrivateKey = 2;
+        address alice = vm.addr(alicePrivateKey);
+        address bob = vm.addr(bobPrivateKey);
+
+        // alice mint a nft
+        vm.prank(alice);
+        NewNft(nftAddress).mint();
+
+        // bob get the money to buy nft
+        NewToken(tokenAddress).transfer(bob, 1e18);
+
+        // bob approve
+        vm.prank(bob);
+        NewToken(tokenAddress).approve(nftMarketAddress, 1e18);
+        
+        // bob use fake signature to buy nft, expect to fail
+        vm.prank(bob);
+        NftMarket(nftMarketAddress).permitBuy(
+            alice,
+            nftMarketAddress,
+            1e18,
+            0,
+            0,
+            2 days,
+            0,
+            bytes32("0xad231"),
+            bytes32("0x2731")
+        );
     }
 }

@@ -92,7 +92,7 @@ contract InscriptionTest is Test {
             Inscription(payable(aliceInscription)).balanceOf(alice),
             100 * 10 ** 18
         );
-        vm.assertEq(alice.balance, 0);
+        vm.assertEq(alice.balance, 10**17); // fee
         vm.assertEq(
             Inscription(payable(aliceInscription)).totalSupply(),
             100 * 10 ** 18
@@ -112,7 +112,8 @@ contract InscriptionTest is Test {
                 Inscription(payable(aliceInscription)).fee()
         }(aliceInscription);
 
-        vm.assertEq(aliceInscription.balance, 10 ** 18 + 10 ** 17);
+        vm.assertEq(aliceInscription.balance, 10 ** 18);
+        vm.assertEq(alice.balance, 10 ** 17);
         vm.assertEq(cloneFactoryAddress.balance, 10 ** 17);
     }
 

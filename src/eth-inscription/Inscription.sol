@@ -44,12 +44,13 @@ contract Inscription is ERC20Upgradeable {
     function mint(address account) external payable {
         console.log(msg.sender);
         console.log(msg.sender.balance);
-        require(msg.value >= price, "no sufficient transfer value");
+        require(msg.value >= price + fee, "no sufficient transfer value");
 
         require(
             totalSupply() < totalSupplyLimit - perMint,
             "exceed maximum supply"
         );
         _mint(account, perMint);
+        payable(owner).transfer(fee);
     }
 }

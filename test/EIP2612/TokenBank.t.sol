@@ -26,11 +26,19 @@ contract TokenBankTest is Test {
         bob = vm.addr(bobPrivateKey);
 
         NewToken(newTokenAddress).transfer(alice, 1e18);
-        console.log("alice", alice);
-        console.log("bob", bob);
     }
 
     function test_permitDeposit() public {
+        console.log("alice's wallet address:", alice);
+        console.log(
+            "alice's balance in token",
+            NewToken(newTokenAddress).balanceOf(alice)
+        );
+        console.log(
+            "alice's balance in bank",
+            NewTokenBank(newTokenBankAddress).bankBalances(alice)
+        );
+
         // alice generate signature
         bytes32 digest = keccak256(
             abi.encodePacked(
@@ -53,6 +61,9 @@ contract TokenBankTest is Test {
 
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(alicePrivateKey, digest);
 
+        console.log(
+            "now bob using alice's signature to deposit alice's money to bank"
+        );
         // bob use signature to deposit successfully
         vm.prank(bob);
         vm.expectEmit();
@@ -65,6 +76,16 @@ contract TokenBankTest is Test {
             v,
             r,
             s
+        );
+
+        console.log("alice's wallet address:", alice);
+        console.log(
+            "alice's updated balance in token",
+            NewToken(newTokenAddress).balanceOf(alice)
+        );
+        console.log(
+            "alice's updated balance in bank",
+            NewTokenBank(newTokenBankAddress).bankBalances(alice)
         );
     }
 }
