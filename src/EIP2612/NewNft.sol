@@ -55,6 +55,7 @@ contract NewNft is ERC721 {
         address from,
         address to,
         uint nftId,
+        uint price,
         uint nounce,
         uint deadline,
         uint8 v,
@@ -68,11 +69,12 @@ contract NewNft is ERC721 {
                 keccak256(
                     abi.encode(
                         keccak256(
-                            "Permit(address from,address to,uint256 nftId,uint256 nonce,uint256 deadline)"
+                            "Permit(address from,address to,uint256 nftId,uint price,uint256 nonce,uint256 deadline)"
                         ),
                         from,
                         to,
                         nftId,
+                        price,
                         nounce,
                         deadline
                     )

@@ -13,9 +13,13 @@ contract BaseERC20 {
     mapping(address => mapping(address => uint256)) allowances;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
 
-    constructor() public {
+    constructor() {
         // write your code here
         // set name,symbol,decimals,totalSupply
         name = "BaseERC20";
@@ -31,9 +35,15 @@ contract BaseERC20 {
         balance = balances[_owner];
     }
 
-    function transfer(address _to, uint256 _value) public returns (bool success) {
+    function transfer(
+        address _to,
+        uint256 _value
+    ) public returns (bool success) {
         // write your code here
-        require(balances[msg.sender] >= _value, "ERC20: transfer amount exceeds balance");
+        require(
+            balances[msg.sender] >= _value,
+            "ERC20: transfer amount exceeds balance"
+        );
 
         balances[msg.sender] -= _value;
         balances[_to] += _value;
@@ -41,10 +51,20 @@ contract BaseERC20 {
         return true;
     }
 
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _value
+    ) public returns (bool success) {
         // write your code here
-        require(balances[_from] >= _value, "ERC20: transfer amount exceeds balance");
-        require(allowances[_from][msg.sender] >= _value, "ERC20: transfer amount exceeds allowance");
+        require(
+            balances[_from] >= _value,
+            "ERC20: transfer amount exceeds balance"
+        );
+        require(
+            allowances[_from][msg.sender] >= _value,
+            "ERC20: transfer amount exceeds allowance"
+        );
         balances[_from] -= _value;
         balances[_to] += _value;
         allowances[_from][msg.sender] -= _value;
@@ -52,14 +72,20 @@ contract BaseERC20 {
         return true;
     }
 
-    function approve(address _spender, uint256 _value) public returns (bool success) {
+    function approve(
+        address _spender,
+        uint256 _value
+    ) public returns (bool success) {
         // write your code here
         allowances[msg.sender][_spender] = _value;
         emit Approval(msg.sender, _spender, _value);
         return true;
     }
 
-    function allowance(address _owner, address _spender) public view returns (uint256 remaining) {
+    function allowance(
+        address _owner,
+        address _spender
+    ) public view returns (uint256 remaining) {
         // write your code here
         remaining = allowances[_owner][_spender];
     }

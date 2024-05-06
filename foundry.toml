@@ -3,7 +3,9 @@ src = "src"
 out = "out"
 libs = ["lib"]
 solc = "0.8.25"
-
+ast = true
+build_info = true
+extra_output = ["storageLayout"]
 [profile.local]
 ETHERSCAN_API_KEY="M8AY2C8CTSMCJYJXSDI8WF594KEMAXS55Z"
 ETH_RPC_URL="127.0.0.1:8545"

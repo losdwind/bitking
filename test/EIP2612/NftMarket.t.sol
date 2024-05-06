@@ -5,7 +5,7 @@ import "../../src/EIP2612/NewNft.sol";
 import "../../src/EIP2612/NewNftMarket.sol";
 import "../../src/EIP2612/NewToken.sol";
 
-contract NftMarketTest is Test {
+contract NftMarketTestV1 is Test {
     address nftAddress;
     address nftMarketAddress;
     address tokenAddress;
@@ -31,6 +31,8 @@ contract NftMarketTest is Test {
         console.log("Alice has minted a NFT with ID:", NewNft(nftAddress).tokenId() - 1);
         console.log("Alice has token balance of", NewToken(tokenAddress).balanceOf(alice));
 
+        uint timestamp = block.timestamp;
+
         // alice sign the permit
         bytes32 digest = keccak256(
             abi.encodePacked(
@@ -39,13 +41,14 @@ contract NftMarketTest is Test {
                 keccak256(
                     abi.encode(
                         keccak256(
-                            "Permit(address from,address to,uint256 nftId,uint256 nonce,uint256 deadline)"
+                            "Permit(address from,address to,uint256 nftId,uint price,uint256 nonce,uint256 deadline)"
                         ),
                         alice,
                         nftMarketAddress,
                         0,
+                        1e18,
                         0,
-                        2 days
+                        timestamp + 2 days
                     )
                 )
             )
@@ -70,10 +73,10 @@ contract NftMarketTest is Test {
         NftMarket(nftMarketAddress).permitBuy(
             alice,
             nftMarketAddress,
+            0,
             1e18,
             0,
-            0,
-            2 days,
+            timestamp + 2 days,
             v,
             r,
             s
@@ -109,10 +112,10 @@ contract NftMarketTest is Test {
         NftMarket(nftMarketAddress).permitBuy(
             alice,
             nftMarketAddress,
+            0,
             1e18,
             0,
-            0,
-            2 days,
+            block.timestamp + 2 days,
             0,
             bytes32("0xad231"),
             bytes32("0x2731")

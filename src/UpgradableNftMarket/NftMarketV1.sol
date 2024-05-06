@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.25;
 
-import "./NewNft.sol";
-import "./NewToken.sol";
-
-contract NftMarket is TokenRecipient {
+import "../EIP2612/NewNft.sol";
+import "../EIP2612/NewToken.sol";
+import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
+import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/UUPSUpgradeable.sol";
+import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
+contract NftMarketV1 is TokenRecipient, Initializable, OwnableUpgradeable, UUPSUpgradeable {
     address tokenAddress;
     address nftAddress;
 
@@ -14,10 +16,25 @@ contract NftMarket is TokenRecipient {
     event Listed(address seller, uint256 price);
     event Sold(address seller, address buyer, uint256 price);
 
-    constructor(address _tokenAddress, address _nftAddress) {
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initialize(
+        address _tokenAddress,
+        address _nftAddress,
+        address initialOwner
+    ) initializer public {
         tokenAddress = _tokenAddress;
         nftAddress = _nftAddress;
+        __Ownable_init(initialOwner);
+        __UUPSUpgradeable_init();
     }
+
+    function _authorizeUpgrade(
+        address newImplementation
+    ) internal override onlyOwner {}
 
     function tokenReceived(
         address sender,

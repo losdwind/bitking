@@ -31,7 +31,7 @@ contract NftMarketTest is Test {
         coin.transfer(bob, 4 ether);
     }
 
-    function test_setUp() public {
+    function test_setUp_complete() public {
         assertEq(nft.balanceOf(alice), 1);
         assertEq(nft.balanceOf(bob), 1);
         assertEq(coin.balanceOf(alice), 3 ether);

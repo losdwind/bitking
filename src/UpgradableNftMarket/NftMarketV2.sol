@@ -1,10 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.25;
 
-import "./NewNft.sol";
-import "./NewToken.sol";
+import "../EIP2612/NewNft.sol";
+import "../EIP2612/NewToken.sol";
+import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
+import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/UUPSUpgradeable.sol";
+import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 
-contract NftMarket is TokenRecipient {
+/// @custom:oz-upgrades-from NftMarketV1
+contract NftMarketV2 is TokenRecipient, Initializable, OwnableUpgradeable, UUPSUpgradeable {
     address tokenAddress;
     address nftAddress;
 
@@ -14,10 +18,26 @@ contract NftMarket is TokenRecipient {
     event Listed(address seller, uint256 price);
     event Sold(address seller, address buyer, uint256 price);
 
-    constructor(address _tokenAddress, address _nftAddress) {
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+
+    }
+
+    function initialize(
+        address _tokenAddress,
+        address _nftAddress,
+        address initialOwner
+    ) initializer public {
         tokenAddress = _tokenAddress;
         nftAddress = _nftAddress;
+        __Ownable_init(initialOwner);
+        __UUPSUpgradeable_init();
     }
+
+    function _authorizeUpgrade(
+        address newImplementation
+    ) internal override onlyOwner {}
 
     function tokenReceived(
         address sender,
@@ -104,4 +124,34 @@ contract NftMarket is TokenRecipient {
         delete seller[nftId];
         return true;
     }
+
+        function permitList(
+        address from,
+        address to,
+        uint nftId,
+        uint price,
+        uint nounce,
+        uint deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external returns (bool) {
+        NewNft(nftAddress).permit(
+            from,
+            to,
+            nftId,
+            price,
+            nounce,
+            deadline,
+            v,
+            r,
+            s
+        );
+
+        prices[nftId] = price;
+        seller[nftId] = from;
+        emit Listed(from, price);
+        return true;
+    }
 }
+
