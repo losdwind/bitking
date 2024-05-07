@@ -3,27 +3,16 @@ src = "src"
 out = "out"
 libs = ["lib"]
 solc = "0.8.25"
+ffi = true
 ast = true
 build_info = true
 extra_output = ["storageLayout"]
-[profile.local]
-ETHERSCAN_API_KEY="M8AY2C8CTSMCJYJXSDI8WF594KEMAXS55Z"
-ETH_RPC_URL="127.0.0.1:8545"
-CHIAN=31337
-ETH_FROM="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
 
+[etherscan]
+mainnet = { key = "${ETHERSCAN_API_KEY}" }
+sepolia = { key = "${ETHERSCAN_API_KEY}", chain = "11155111" }
 
-[profile.testnet]
-ETHERSCAN_API_KEY="M8AY2C8CTSMCJYJXSDI8WF594KEMAXS55Z"
-ETH_RPC_URL="https://public.stackup.sh/api/v1/node/ethereum-sepolia"
-CHIAN=11155111
-ETH_FROM="0x22271C6e574f36149907eb7753C07d0bEA7Ba98c"
-
-[profile.mainnet]
-ETHERSCAN_API_KEY="M8AY2C8CTSMCJYJXSDI8WF594KEMAXS55Z"
-ETH_RPC_URL=""
-CHIAN=""
-ETH_FROM=""
-
+[rpc_endpoints]
+sepolia = "${SEPOLIA_RPC_URL}"
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

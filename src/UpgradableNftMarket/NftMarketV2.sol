@@ -8,7 +8,12 @@ import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/UUPSUpgradeable
 import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 
 /// @custom:oz-upgrades-from NftMarketV1
-contract NftMarketV2 is TokenRecipient, Initializable, OwnableUpgradeable, UUPSUpgradeable {
+contract NftMarketV2 is
+    TokenRecipient,
+    Initializable,
+    OwnableUpgradeable,
+    UUPSUpgradeable
+{
     address tokenAddress;
     address nftAddress;
 
@@ -21,14 +26,13 @@ contract NftMarketV2 is TokenRecipient, Initializable, OwnableUpgradeable, UUPSU
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
-
     }
 
     function initialize(
         address _tokenAddress,
         address _nftAddress,
         address initialOwner
-    ) initializer public {
+    ) public initializer {
         tokenAddress = _tokenAddress;
         nftAddress = _nftAddress;
         __Ownable_init(initialOwner);
@@ -125,7 +129,7 @@ contract NftMarketV2 is TokenRecipient, Initializable, OwnableUpgradeable, UUPSU
         return true;
     }
 
-        function permitList(
+    function permitList(
         address from,
         address to,
         uint nftId,
@@ -154,4 +158,3 @@ contract NftMarketV2 is TokenRecipient, Initializable, OwnableUpgradeable, UUPSU
         return true;
     }
 }
-
