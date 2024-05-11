@@ -13,3 +13,6 @@
 [submodule "lib/openzeppelin-foundry-upgrades"]
 	path = lib/openzeppelin-foundry-upgrades
 	url = https://github.com/OpenZeppelin/openzeppelin-foundry-upgrades
+[submodule "lib/merkle-tree"]
+	path = lib/merkle-tree
+	url = https://github.com/openzeppelin/merkle-tree
