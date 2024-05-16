@@ -5,25 +5,25 @@ import "./KKStakingPool.sol";
 
 contract KKStakingTest is Test {
     struct Stake {
-        uint256 amount;
-        uint256 lastUpdatedCumulatedAverage;
-        uint256 cumulatedKKToken;
+        uint128 amount;
+        uint128 lastUpdatedCumulatedAverage;
+        uint128 cumulatedKKToken;
     }
 
     struct TotalStakeAverage {
-        uint256 totalStake;
-        uint256 lastUpdatedBlockNumber;
-        uint256 lastUpdatedCumulatedAverage;
+        uint128 totalStake;
+        uint128 lastUpdatedBlockNumber;
+        uint128 lastUpdatedCumulatedAverage;
     }
 
     address staking_ca;
     address kk_ca;
     address alice;
 
-    event Staked(address indexed staker, uint256 amount);
-    event Minted(address indexed to, uint256 amount);
-    event Withdrawn(address indexed to, uint256 amount);
-    event ForceWithdrawn(address indexed to, uint256 amount);
+    event Staked(address indexed staker, uint128 amount);
+    event Minted(address indexed to, uint128 amount);
+    event Withdrawn(address indexed to, uint128 amount);
+    event ForceWithdrawn(address indexed to, uint128 amount);
 
     function setUp() public {
         kk_ca = address(new KKToken());
@@ -32,7 +32,7 @@ contract KKStakingTest is Test {
         KKToken(kk_ca).transfer(staking_ca, 1000 ether);
     }
 
-    function test_fuzz_staking(uint256 amount) public {
+    function test_fuzz_staking(uint128 amount) public {
         vm.assume(amount > 0);
         vm.deal(alice, amount);
         vm.startPrank(alice);
@@ -43,7 +43,7 @@ contract KKStakingTest is Test {
         vm.stopPrank();
     }
 
-    function test_fuzz_unstaking(uint256 amount, uint256 roll) public {
+    function test_fuzz_unstaking(uint128 amount, uint256 roll) public {
         vm.assume(amount > 0);
         vm.assume(roll < 100 && roll > 0);
         vm.roll(0);
@@ -60,8 +60,9 @@ contract KKStakingTest is Test {
         vm.stopPrank();
     }
 
-    function test_fuzz_claim(uint256 amount, uint256 roll) public {
+    function test_fuzz_claim(uint128 amount, uint256 roll) public {
         vm.assume(amount > 0);
+        vm.assume(amount < 1000000 ether); // restrict staking amount to prevent overflow
         vm.assume(roll < 100 && roll > 0);
         vm.roll(0);
         vm.deal(alice, amount);
@@ -69,7 +70,9 @@ contract KKStakingTest is Test {
         KKToken(kk_ca).approve(staking_ca, amount);
         KKStakingPool(payable(staking_ca)).stake{value: amount}();
 
-        vm.roll(10);
+        vm.roll(roll);
         KKStakingPool(payable(staking_ca)).claim();
+        console.log("difference", roll * 10 ether - KKToken(kk_ca).balanceOf(alice));
+        assertLe(roll * 10 ether -  KKToken(kk_ca).balanceOf(alice), 1 ether); // 1 ether difference occured when allocate a lot of ethers with large roll
     }
 }

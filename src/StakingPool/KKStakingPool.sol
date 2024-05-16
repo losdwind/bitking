@@ -7,73 +7,72 @@ import "forge-std/console.sol";
 
 contract KKStakingPool {
     struct Stake {
-        uint256 amount;
-        uint256 lastUpdatedCumulatedAverage;
-        uint256 cumulatedKKToken;
+        uint128 amount;
+        uint128 cumulatedKKToken;
+        uint128 lastUpdatedCumulatedAverage;
     }
 
     struct TotalStakeAverage {
-        uint256 totalStake;
-        uint256 lastUpdatedBlockNumber;
-        uint256 lastUpdatedCumulatedAverage;
+        uint128 totalStake;
+        uint128 lastUpdatedBlockNumber;
+        uint128 lastUpdatedCumulatedAverage;
     }
 
     address public immutable kk_ca;
 
-    TotalStakeAverage totalAverage;
+    TotalStakeAverage public totalAverage;
     mapping(address => Stake) public records;
 
-    event Staked(address indexed staker, uint256 amount);
-    event Unstaked(address indexed staker, uint256 amount);
-    event Claimed(address indexed staker, uint256 amount);
+    event Staked(address indexed staker, uint128 amount);
+    event Unstaked(address indexed staker, uint128 amount);
+    event Claimed(address indexed staker, uint128 amount);
 
     constructor(address _kk_ca) {
         kk_ca = _kk_ca;
     }
 
-    receive() external payable {
-
-    }
+    receive() external payable {}
 
     function stake() external payable {
         require(msg.value > 0, "Amount must be greater than 0");
-        uint256 currentBlock = block.number;
+        uint128 currentBlock = uint128(block.number);
         Stake storage record = records[msg.sender];
 
         // update total
-        totalAverage.totalStake += msg.value;
+        totalAverage.totalStake += uint128(msg.value);
         totalAverage.lastUpdatedCumulatedAverage +=
-            10 ether * (currentBlock - totalAverage.lastUpdatedBlockNumber) / totalAverage.totalStake;
-        totalAverage.lastUpdatedBlockNumber = block.number;
+            1e6 * 10 ether * (currentBlock - totalAverage.lastUpdatedBlockNumber) / totalAverage.totalStake; // multiply 1e6 to prevent fractional results
+        totalAverage.lastUpdatedBlockNumber = currentBlock;
 
         // update user
-        record.cumulatedKKToken += record.amount * (totalAverage.lastUpdatedCumulatedAverage - record.lastUpdatedCumulatedAverage);
+        record.cumulatedKKToken +=
+            record.amount * (totalAverage.lastUpdatedCumulatedAverage - record.lastUpdatedCumulatedAverage) / 1e6;
         record.lastUpdatedCumulatedAverage = totalAverage.lastUpdatedCumulatedAverage;
-        record.amount += msg.value;
+        record.amount += uint128(msg.value);
 
-        emit Staked(msg.sender, msg.value);
+        emit Staked(msg.sender, uint128(msg.value));
     }
 
     /// @notice unstake to get back user's ETH
     /// @dev Explain to a developer any extra details
     /// @param amount the amount of ether user want to unstake)
-    function unstake(uint256 amount) external {
+    function unstake(uint128 amount) external {
         require(amount > 0, "Amount must be greater than 0");
         Stake storage record = records[msg.sender];
         require(record.amount >= amount, "Insufficient staked amount");
-        uint256 currentBlock = block.number;
+        uint128 currentBlock = uint128(block.number);
         require(currentBlock > totalAverage.lastUpdatedCumulatedAverage, "block does not change");
         // update total
         totalAverage.lastUpdatedCumulatedAverage +=
-            10 ether * (currentBlock - totalAverage.lastUpdatedBlockNumber) / totalAverage.totalStake;
+            1e6 * 10 ether * (currentBlock - totalAverage.lastUpdatedBlockNumber) / totalAverage.totalStake; // multiply 1e18 to prevent fractional
 
         totalAverage.totalStake -= amount;
 
-        totalAverage.lastUpdatedBlockNumber = block.number;
+        totalAverage.lastUpdatedBlockNumber = currentBlock;
 
         // update user
         record.cumulatedKKToken +=
-            record.amount * (totalAverage.lastUpdatedCumulatedAverage - record.lastUpdatedCumulatedAverage);
+            record.amount * (totalAverage.lastUpdatedCumulatedAverage - record.lastUpdatedCumulatedAverage) / 1e6;
         record.lastUpdatedCumulatedAverage = totalAverage.lastUpdatedCumulatedAverage;
         record.amount -= amount;
         console.log("balance of kkstakng pool", address(this).balance);
@@ -88,13 +87,26 @@ contract KKStakingPool {
         Stake storage record = records[msg.sender];
         require(record.amount > 0, "Nothing to claim");
 
+                uint128 currentBlock = uint128(block.number);
+        require(currentBlock > totalAverage.lastUpdatedCumulatedAverage, "block does not change");
+        // update total
+        totalAverage.lastUpdatedCumulatedAverage +=
+            1e6 * 10 ether * (currentBlock - totalAverage.lastUpdatedBlockNumber) / totalAverage.totalStake ; // multiply 1e18 to prevent fractional
+
+        totalAverage.lastUpdatedBlockNumber = currentBlock;
+
         // update user
         record.cumulatedKKToken +=
-            record.amount * (totalAverage.lastUpdatedCumulatedAverage - record.lastUpdatedCumulatedAverage);
+            record.amount * (totalAverage.lastUpdatedCumulatedAverage - record.lastUpdatedCumulatedAverage) / 1e6;
+        console.log("user cumulatedKKToken", record.cumulatedKKToken);
+
         record.lastUpdatedCumulatedAverage = totalAverage.lastUpdatedCumulatedAverage;
-        uint256 canClaim = record.cumulatedKKToken;
+        console.log("lastUpdatedCumulatedAverage", record.lastUpdatedCumulatedAverage);
+
+        uint128 canClaim = record.cumulatedKKToken;
         record.cumulatedKKToken = 0;
 
+        console.log("can claim", canClaim);
         IERC20(kk_ca).transfer(msg.sender, canClaim);
         emit Claimed(msg.sender, canClaim);
     }
@@ -105,8 +117,8 @@ contract KKStakingPool {
 
     function earned(address account) external view returns (uint256) {
         Stake storage record = records[account];
-        uint256 cumulatedKKToken = record.cumulatedKKToken
-            + record.amount * (totalAverage.lastUpdatedCumulatedAverage - record.lastUpdatedCumulatedAverage);
+        uint128 cumulatedKKToken = record.cumulatedKKToken
+            + record.amount * (totalAverage.lastUpdatedCumulatedAverage - record.lastUpdatedCumulatedAverage) / 1 ether;
 
         return cumulatedKKToken;
     }
