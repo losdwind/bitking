@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.25;
 
-import "./9_ERC721.sol";
-import "./8_ERC_20_Extended.sol";
+import "./ERC721.sol";
+import "./ERC20Extended.sol";
 
 contract NftMarket is TokenRecipient {
     address tokenAddress;

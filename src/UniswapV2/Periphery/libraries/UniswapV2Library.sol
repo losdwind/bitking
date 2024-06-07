@@ -1,9 +1,8 @@
 pragma solidity 0.8.25;
 
 import "../../Core/interfaces/IUniswapV2Pair.sol";
-import {console} from "./../../../lib/forge-std/src/console.sol";
+import {console} from "forge-std/console.sol";
 import "./SafeMath.sol";
-import {console} from "./../../../lib/forge-std/src/console.sol";
 import {FacArgs} from "../../Core/UniswapV2Factory.sol";
 
 library UniswapV2Library {

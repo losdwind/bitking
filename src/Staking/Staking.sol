@@ -104,7 +104,6 @@ contract esRNT is ERC20 {
 
     function mint(address to, uint256 amount) external {
         // only staking contract can mint
-
         require(amount > 0, "Amount must be greater than 0");
         locks[to].push(Lock(amount, block.timestamp));
         emit Minted(to, amount);

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.25;
 import "forge-std/Test.sol";
-import "../../src/eth-inscription/Inscription.sol";
-import "../../src/eth-inscription/CloneFactory.sol";
+import "../../src/ETHInscription/Inscription.sol";
+import "../../src/ETHInscription/CloneFactory.sol";
 
 contract InscriptionTest is Test {
     address cloneFactoryAddress;

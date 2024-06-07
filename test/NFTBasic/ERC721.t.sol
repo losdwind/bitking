@@ -2,7 +2,7 @@
 pragma solidity 0.8.25;
 
 import "forge-std/Test.sol";
-import "../../src/nft-basic/9_ERC721.sol";
+import "../../src/NFTBasic/ERC721.sol";
 
 contract NftTest is Test {
     AJNFT nft;

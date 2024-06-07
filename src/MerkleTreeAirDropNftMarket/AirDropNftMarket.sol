@@ -123,11 +123,6 @@ contract AirDropNftMarket is TokenRecipient {
 
     function verify(bytes32[] memory proof, bytes32 root, address addr) public {
         bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(addr, 1))));
-        console.logBytes32(proof[0]);
-        console.logBytes32(proof[1]);
-
-        console.logBytes32(root);
-        console.logBytes32(leaf);
         require(MerkleProof.verify(proof, root, leaf), "Invalid proof");
     }
 }

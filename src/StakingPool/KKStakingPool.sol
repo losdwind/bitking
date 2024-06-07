@@ -64,7 +64,7 @@ contract KKStakingPool {
         require(currentBlock > totalAverage.lastUpdatedCumulatedAverage, "block does not change");
         // update total
         totalAverage.lastUpdatedCumulatedAverage +=
-            1e6 * 10 ether * (currentBlock - totalAverage.lastUpdatedBlockNumber) / totalAverage.totalStake; // multiply 1e18 to prevent fractional
+            1e6 * 10 ether * (currentBlock - totalAverage.lastUpdatedBlockNumber) / totalAverage.totalStake; // multiply 1e6 to prevent fractional
 
         totalAverage.totalStake -= amount;
 
@@ -91,7 +91,7 @@ contract KKStakingPool {
         require(currentBlock > totalAverage.lastUpdatedCumulatedAverage, "block does not change");
         // update total
         totalAverage.lastUpdatedCumulatedAverage +=
-            1e6 * 10 ether * (currentBlock - totalAverage.lastUpdatedBlockNumber) / totalAverage.totalStake ; // multiply 1e18 to prevent fractional
+            1e6 * 10 ether * (currentBlock - totalAverage.lastUpdatedBlockNumber) / totalAverage.totalStake ; // multiply 1e6 to prevent fractional
 
         totalAverage.lastUpdatedBlockNumber = currentBlock;
 

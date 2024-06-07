@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.25;
 import "@openzeppelin/contracts/proxy/Clones.sol";
-import "../../src/eth-inscription/Inscription.sol";
+import "../../src/ETHInscription/Inscription.sol";
 import "forge-std/console.sol";
 
 // interface Implementation {

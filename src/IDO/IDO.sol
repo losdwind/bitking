@@ -59,7 +59,7 @@ contract IDO {
         );
         claimedOrWithdrawed[msg.sender] = true;
         uint256 withdrawed = raisingAmount[msg.sender];
-        (bool succeed, bytes memory data) = msg.sender.call{value: withdrawed}(
+        (bool succeed, ) = msg.sender.call{value: withdrawed}(
             ""
         );
         require(succeed, "failed to send ether");

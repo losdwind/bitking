@@ -2,9 +2,11 @@ pragma solidity 0.8.25;
 
 import "./UniswapV2Pair.sol";
 import "./interfaces/IUniswapV2Pair.sol";
+
 interface FacArgs {
-    function INIT_CODE_HASH() external view returns(bytes32);
+    function INIT_CODE_HASH() external view returns (bytes32);
 }
+
 contract UniswapV2Factory {
     address public feeTo;
     address public feeToSetter;
@@ -15,7 +17,7 @@ contract UniswapV2Factory {
 
     event PairCreated(address indexed token0, address indexed token1, address pair, uint256);
 
-    constructor(address _feeToSetter) public {
+    constructor(address _feeToSetter) {
         feeToSetter = _feeToSetter;
     }
 

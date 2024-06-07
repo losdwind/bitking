@@ -6,7 +6,7 @@ import "./libraries/Math.sol";
 import "./libraries/UQ112x112.sol";
 import "./interfaces/IUniswapV2Factory.sol";
 import "./interfaces/IUniswapV2Callee.sol";
-import {console} from "./../../lib/forge-std/src/console.sol";
+import {console} from "forge-std/console.sol";
 contract UniswapV2Pair is UniswapV2ERC20 {
     using SafeMath for uint256;
     using UQ112x112 for uint224;
@@ -60,7 +60,7 @@ contract UniswapV2Pair is UniswapV2ERC20 {
     );
     event Sync(uint112 reserve0, uint112 reserve1);
 
-    constructor() public {
+    constructor() {
         factory = msg.sender;
     }
 

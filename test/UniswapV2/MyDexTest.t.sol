@@ -2,11 +2,11 @@
 pragma solidity 0.8.25;
 
 import "forge-std/Test.sol";
-import {UniswapV2Router02} from "./../src/Periphery/UniswapV2Router02.sol";
-import {UniswapV2Factory} from "./../src/Core/UniswapV2Factory.sol";
-import "../src/Periphery/test/WETH9.sol";
-import "../src/RNT.sol";
-import "../src/MyDex.sol";
+import {UniswapV2Router02} from "../../src/UniswapV2/Periphery/UniswapV2Router02.sol";
+import {UniswapV2Factory} from "../../src/UniswapV2/Core/UniswapV2Factory.sol";
+import "../../src/UniswapV2/Periphery/test/WETH9.sol";
+import "../../src/UniswapV2/RNT.sol";
+import "../../src/UniswapV2/MyDex.sol";
 
 contract MyDexTest is Test {
     address router;

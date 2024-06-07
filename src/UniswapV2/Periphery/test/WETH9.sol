@@ -14,7 +14,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 pragma solidity 0.8.25;
 
-import {console} from "./../../../lib/forge-std/src/console.sol";
+import {console} from "forge-std/console.sol";
 
 contract WETH9 {
     string public name = "Wrapped Ether";

@@ -2,9 +2,9 @@
 pragma solidity 0.8.25;
 
 import "forge-std/Test.sol";
-import "../../src/nft-basic/10_NFT_Market_Extended.sol";
-import "../../src/nft-basic/9_ERC721.sol";
-import "../../src/nft-basic/8_ERC_20_Extended.sol";
+import "../../src/NFTBasic/NFTMarketExtended.sol";
+import "../../src/NFTBasic/ERC721.sol";
+import "../../src/NFTBasic/ERC20Extended.sol";
 
 contract NftMarketTest is Test {
     AJNFT nft;

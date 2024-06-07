@@ -11,7 +11,7 @@ contract UniswapV2Migrator is IUniswapV2Migrator {
     IUniswapV1Factory immutable factoryV1;
     IUniswapV2Router01 immutable router;
 
-    constructor(address _factoryV1, address _router) public {
+    constructor(address _factoryV1, address _router) {
         factoryV1 = IUniswapV1Factory(_factoryV1);
         router = IUniswapV2Router01(_router);
     }

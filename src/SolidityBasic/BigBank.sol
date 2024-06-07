@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.25;
 
-import "./bank.sol";
+import "./Bank.sol";
 
 contract Ownable {
     event Received(address from, address to, uint256 amount);

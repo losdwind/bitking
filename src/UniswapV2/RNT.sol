@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.25;
 
-import "./Periphery/libraries/SafeMath.sol";
-import {console} from "./../lib/forge-std/src/console.sol";
+import "../UniswapV2/Periphery/libraries/SafeMath.sol";
+import {console} from "forge-std/console.sol";
 contract RNT {
     using SafeMath for uint256;
 
@@ -21,7 +21,7 @@ contract RNT {
     event Approval(address indexed owner, address indexed spender, uint256 value);
     event Transfer(address indexed from, address indexed to, uint256 value);
 
-    constructor(uint256 _totalSupply) public {
+    constructor(uint256 _totalSupply) {
         uint256 chainId;
         assembly {
             chainId := chainid()

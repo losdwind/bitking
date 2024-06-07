@@ -19,7 +19,7 @@ contract UniswapV2Router02 {
         _;
     }
 
-    constructor(address _factory, address _WETH) public {
+    constructor(address _factory, address _WETH) {
         factory = _factory;
         WETH = _WETH;
     }
@@ -92,7 +92,7 @@ contract UniswapV2Router02 {
         console.log("msg.value", msg.value);
         (amountToken, amountETH) =
             _addLiquidity(token, WETH, amountTokenDesired, msg.value, amountTokenMin, amountETHMin);
-            // console.log("amountTOken, amountEth", amountToken, amountETH);
+        // console.log("amountTOken, amountEth", amountToken, amountETH);
         address pair = UniswapV2Library.pairFor(factory, token, WETH);
         TransferHelper.safeTransferFrom(token, msg.sender, pair, amountToken);
         IWETH(WETH).deposit{value: amountETH}();
